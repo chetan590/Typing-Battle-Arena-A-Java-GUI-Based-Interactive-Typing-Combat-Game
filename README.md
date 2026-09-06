@@ -1,0 +1,2 @@
+# Typing-Battle-Arena-A-Java-GUI-Based-Interactive-Typing-Combat-Game
+Typing Battle Arena is a Java GUI-based typing game where players defeat opponents by typing words quickly and accurately. It includes Story Mode, Single Player, Two Player, adaptive AI, animations, and real-time typing performance analysis. Built using Java Swing and OOP concepts, it combines typing practice with interactive combat gameplay.
