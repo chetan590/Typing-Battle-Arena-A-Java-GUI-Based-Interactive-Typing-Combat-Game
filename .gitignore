@@ -1,0 +1,76 @@
+# Compiled Java class files and build directories
+*.class
+*.jar
+*.war
+*.ear
+bin/
+target/
+build/
+out/
+
+# Environment files & secrets
+.env
+.env.local
+.env.*.local
+*.env
+
+# Local save & user data files
+*.dat
+*.log
+.typing_battle_arena/
+data/
+
+# Java runtime crash logs
+hs_err_pid*
+replay_pid*
+
+# IDE & Editor files
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Eclipse
+.project
+.classpath
+.settings/
+.metadata/
+bin/
+tmp/
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# NetBeans
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# Operating System temporary and metadata files
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+
