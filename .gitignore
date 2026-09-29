@@ -3,7 +3,6 @@
 *.jar
 *.war
 *.ear
-bin/
 target/
 build/
 out/
