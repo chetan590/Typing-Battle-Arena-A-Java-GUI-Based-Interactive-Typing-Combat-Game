@@ -1,7 +1,8 @@
 package com.typingbattle.model;
 
 /**
- * Story Mode Stage definition representing a chapter in reclaiming the Keyboard Core.
+ * Story Mode Stage definition representing an act in reclaiming and protecting the Keyboard Core.
+ * Expanded 8-act continuous narrative with progressive difficulty, stage dialogues, and lore.
  */
 public class StoryStage {
     private final int stageNumber;
@@ -90,7 +91,43 @@ public class StoryStage {
                 AIPersonality.BOSS_AI,
                 Difficulty.INTENSE,
                 "At last, the final contender! The Keyboard Core is mine! I shall delete every word in reality!",
-                "The darkness dissipates! The legendary Keyboard Core glows with radiant light—peace is restored to the realm!",
+                "The darkness dissipates! The legendary Keyboard Core glows with radiant light - peace is restored to the realm!",
+                "KEYBOARD_SANCTUM"
+            ),
+            new StoryStage(
+                6,
+                "Act VI: Glitch Horizon",
+                "Neo-Tokyo Sub-grid Matrix",
+                CharacterType.ROBOT_WARRIOR,
+                "Rogue Prototype Unit VX-Omega",
+                AIPersonality.AGGRESSIVE,
+                Difficulty.HARD,
+                "CRITICAL ALERT: Malakor's corrupted code has leaked into the central mainframe! Override authorized!",
+                "The rogue core stabilizes. 'System rebooting... corrupted sectors purged successfully.'",
+                "CYBERPUNK"
+            ),
+            new StoryStage(
+                7,
+                "Act VII: Celestial Lexicon",
+                "The Astral Stratosphere",
+                CharacterType.MAGE,
+                "Archon Aurelia the Ascended",
+                AIPersonality.DEFENSIVE,
+                Difficulty.INTENSE,
+                "To forge an eternal seal upon the Core, mortal fingers must channel the speed of the cosmos itself!",
+                "Golden celestial light infuses your hands. 'You possess divine precision... the ultimate trial awaits.'",
+                "MYSTIC_TEMPLE"
+            ),
+            new StoryStage(
+                8,
+                "Act VIII: The Eternal Singularity",
+                "The Prime Void Singularity",
+                CharacterType.SHADOW_FIGHTER,
+                "Void Sovereign Malakor Reborn",
+                AIPersonality.BOSS_AI,
+                Difficulty.INTENSE,
+                "I am the entropy of all written thought! Face the final cataclysm and be erased forever!",
+                "With supreme typing mastery, the void rift collapses permanently! The Keyboard Core shines eternal!",
                 "KEYBOARD_SANCTUM"
             )
         };
@@ -107,4 +144,3 @@ public class StoryStage {
     public String getVictoryEpilogue() { return victoryEpilogue; }
     public String getArenaTheme() { return arenaTheme; }
 }
-

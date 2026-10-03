@@ -23,7 +23,7 @@ public class Main {
         // Launch UI safely on Swing Event Dispatch Thread (EDT)
         SwingUtilities.invokeLater(() -> {
             System.out.println("==================================================");
-            System.out.println("   TYPING BATTLE ARENA — COMBAT ENGINE STARTED    ");
+            System.out.println("   TYPING BATTLE ARENA - COMBAT ENGINE STARTED    ");
             System.out.println("==================================================");
             System.out.println("Reclaim the Keyboard Core through typing mastery!");
 

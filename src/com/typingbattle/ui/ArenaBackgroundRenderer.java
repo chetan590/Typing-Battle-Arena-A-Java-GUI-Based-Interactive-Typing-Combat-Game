@@ -147,10 +147,10 @@ public class ArenaBackgroundRenderer {
 
         // Glowing runes on monoliths
         g.setColor(new Color(190, 100, 255, 180));
-        g.drawString("ᚱ", 115, m1Y + 40);
-        g.drawString("ᛗ", 115, m1Y + 80);
-        g.drawString("ᚹ", w - 130, m2Y + 40);
-        g.drawString("ᛟ", w - 130, m2Y + 80);
+        g.drawString("DO", 115, m1Y + 40);
+        g.drawString("JO", 115, m1Y + 80);
+        g.drawString("ZEN", w - 130, m2Y + 40);
+        g.drawString("KEY", w - 130, m2Y + 80);
 
         // Stone Temple Platform
         int floorY = (int) (h * 0.65);

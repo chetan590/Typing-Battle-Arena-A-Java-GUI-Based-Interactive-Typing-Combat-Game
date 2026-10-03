@@ -45,7 +45,7 @@ public class CharacterSelectPanel extends JPanel {
         headerPanel.setOpaque(false);
         headerPanel.setBorder(new EmptyBorder(25, 35, 15, 35));
 
-        JButton backBtn = UITheme.createStyledButton("← BACK", UITheme.TEXT_SECONDARY, 110, 38);
+        JButton backBtn = UITheme.createStyledButton("BACK", UITheme.TEXT_SECONDARY, 110, 38);
         backBtn.addActionListener(e -> {
             if (forTwoPlayer && playerPicking == 2) {
                 playerPicking = 1;
@@ -190,7 +190,7 @@ public class CharacterSelectPanel extends JPanel {
         statsCard.add(detailsPanel, BorderLayout.CENTER);
 
         // Confirm / Select button at bottom of stats
-        JButton confirmBtn = UITheme.createStyledButton("CONFIRM SELECTION ▶", UITheme.ACCENT_GREEN, 380, 45);
+        JButton confirmBtn = UITheme.createStyledButton("CONFIRM SELECTION", UITheme.ACCENT_GREEN, 380, 45);
         confirmBtn.addActionListener(e -> onConfirmSelection());
         statsCard.add(confirmBtn, BorderLayout.SOUTH);
 

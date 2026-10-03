@@ -99,7 +99,7 @@ public class ArenaPanel extends JPanel {
         });
 
         // Special Attack Button
-        specialAttackBtn = UITheme.createStyledButton("⚡ UNLEASH SPECIAL [ENTER]", UITheme.ACCENT_AMBER, 260, 48);
+        specialAttackBtn = UITheme.createStyledButton("UNLEASH SPECIAL [ENTER]", UITheme.ACCENT_AMBER, 260, 48);
         specialAttackBtn.setEnabled(false);
         specialAttackBtn.addActionListener(e -> {
             engine.triggerPlayer1Special();
@@ -210,7 +210,8 @@ public class ArenaPanel extends JPanel {
         p1Panel.setOpaque(false);
         p1Panel.setLayout(new BoxLayout(p1Panel, BoxLayout.Y_AXIS));
 
-        JLabel p1Name = new JLabel(engine.getPlayer1().getProfile().getName() + " (YOU)");
+        String pilotName = com.typingbattle.model.SessionManager.getInstance().getPlayerName();
+        JLabel p1Name = new JLabel(pilotName + " (" + engine.getPlayer1().getProfile().getName() + ")");
         p1Name.setFont(UITheme.FONT_SUBHEADER);
         p1Name.setForeground(engine.getPlayer1().getProfile().getPrimaryColor());
 
@@ -223,7 +224,7 @@ public class ArenaPanel extends JPanel {
         centerHud.setOpaque(false);
         centerHud.setLayout(new BoxLayout(centerHud, BoxLayout.Y_AXIS));
 
-        JButton pauseBtn = UITheme.createStyledButton("⏸ PAUSE", UITheme.TEXT_SECONDARY, 95, 28);
+        JButton pauseBtn = UITheme.createStyledButton("PAUSE", UITheme.TEXT_SECONDARY, 95, 28);
         pauseBtn.setFont(UITheme.FONT_SMALL);
         pauseBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
         pauseBtn.addActionListener(e -> togglePause());
@@ -296,8 +297,8 @@ public class ArenaPanel extends JPanel {
         // 1. Draw Arena Backdrop
         ArenaBackgroundRenderer.renderBackground(g2, arenaTheme, w, h, now);
 
-        // 2. Draw Characters (Player on Left, Opponent on Right)
-        int fighterGroundY = (int) (h * 0.65);
+        // 2. Draw Characters (Player on Left, Opponent on Right) - elevated to avoid word overlap
+        int fighterGroundY = (int) (h * 0.46);
         int p1X = (int) (w * 0.28);
         int p2X = (int) (w * 0.72);
 
@@ -415,7 +416,7 @@ public class ArenaPanel extends JPanel {
         int cardW = 540;
         int cardH = 75;
         int cardX = (w - cardW) / 2;
-        int cardY = h - 265;
+        int cardY = h - 175;
 
         // Card Backdrop
         g2.setColor(new Color(20, 28, 45, 230));

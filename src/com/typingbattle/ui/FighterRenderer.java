@@ -17,6 +17,8 @@ public class FighterRenderer {
 
         Graphics2D g = (Graphics2D) g2.create();
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
 
         // Store fighter coordinates for particle hit targets
         fighter.setX(x);
@@ -84,24 +86,19 @@ public class FighterRenderer {
         CharacterType type = fighter.getProfile().getType();
         switch (type) {
             case NINJA:
-                drawNinja(g, fighter, globalTimeMs, state, progress);
                 drawNinja(g, fighter, globalTimeMs, state);
                 break;
             case SAMURAI:
-                drawSamurai(g, fighter, globalTimeMs, state, progress);
                 drawSamurai(g, fighter, globalTimeMs, state);
                 break;
             case MAGE:
-                drawMage(g, fighter, globalTimeMs, state, progress);
                 drawMage(g, fighter, globalTimeMs, state);
                 break;
             case ROBOT_WARRIOR:
-                drawRobot(g, fighter, globalTimeMs, state, progress);
                 drawRobot(g, fighter, globalTimeMs, state);
                 break;
             case SHADOW_FIGHTER:
             default:
-                drawShadowFighter(g, fighter, globalTimeMs, state, progress);
                 drawShadowFighter(g, fighter, globalTimeMs, state);
                 break;
         }
@@ -126,7 +123,6 @@ public class FighterRenderer {
     // Character Specific Java 2D Visual Models
     // ==========================================
 
-    private static void drawNinja(Graphics2D g, Fighter f, long t, Fighter.State state, double prog) {
     private static void drawNinja(Graphics2D g, Fighter f, long t, Fighter.State state) {
         Color primary = f.getProfile().getPrimaryColor(); // Emerald Cyan
 
@@ -143,44 +139,40 @@ public class FighterRenderer {
         g.setColor(primary);
         g.setStroke(new BasicStroke(2.5f));
         g.drawLine(-12, -35, 12, 10); // Belt strap
-        g.drawLine(12, -35, -12, 10);
-
-        // Legs
-        g.setColor(new Color(20, 25, 35));
-        g.fillRect(-16, 25, 12, 50);
-        g.fillRect(4, 25, 12, 50);
-        // Shin wraps
-        g.setColor(primary);
-        g.fillRect(-16, 50, 12, 6);
-        g.fillRect(4, 50, 12, 6);
 
         // Head & Mask
-        g.setColor(new Color(20, 25, 35));
-        g.fillOval(-20, -65, 40, 40);
-        // Face opening & Ninja Eyes
-        g.setColor(new Color(245, 215, 185));
-        g.fillRect(-10, -53, 22, 10);
-        g.setColor(Color.BLACK);
-        g.fillRect(-2, -50, 5, 3); // Eye
-        // Forehead Protector
-        g.setColor(new Color(170, 180, 195));
-        g.fillRoundRect(-14, -62, 28, 8, 4, 4);
+        g.setColor(new Color(20, 24, 32));
+        g.fillOval(-16, -65, 32, 32);
+        // Shinobi Headband
+        g.setColor(primary);
+        g.fillRect(-16, -58, 32, 8);
+        g.setColor(Color.WHITE);
+        g.fillOval(-3, -56, 6, 4); // Metal clan plate
 
-        // Arms & Weapons (Kunai / Shuriken)
+        // Glowing Ninja Eyes
+        g.setColor(primary);
+        g.fillRect(-4, -48, 8, 4);
+        g.setColor(Color.WHITE);
+        g.fillRect(0, -47, 4, 2);
+
+        // Legs & Tabi Boots
+        g.setColor(new Color(20, 24, 32));
+        g.fillRect(-15, 25, 12, 45);
+        g.fillRect(3, 25, 12, 45);
+        g.setColor(primary);
+        g.fillRect(-15, 52, 12, 6); // Leg wraps
+        g.fillRect(3, 52, 12, 6);
+
+        // Arms & Katana / Shuriken
         g.setColor(new Color(25, 30, 40));
         if (state == Fighter.State.ATTACKING) {
-            // Extended arm throwing kunai
-            g.fillRect(10, -30, 35, 10);
-            // Steel Kunai
-            g.setColor(Color.WHITE);
-            int[] kx = {45, 65, 45};
-            int[] ky = {-28, -25, -22};
-            g.fillPolygon(kx, ky, 3);
-        } else if (state == Fighter.State.VICTORY) {
-            // Arms raised high
-            g.fillRect(10, -55, 10, 35);
-            g.setColor(Color.WHITE);
-            g.fillOval(8, -65, 14, 14); // Spinning shuriken
+            // Extended Katana Strike
+            g.fillRect(10, -25, 30, 10);
+            g.setColor(Color.LIGHT_GRAY);
+            g.setStroke(new BasicStroke(3.5f));
+            g.drawLine(35, -20, 80, -20); // Katana blade
+            g.setColor(primary);
+            g.drawLine(70, -20, 80, -20); // Energy tip
         } else {
             // Guard stance
             g.fillRect(10, -25, 12, 35);
@@ -190,7 +182,6 @@ public class FighterRenderer {
         }
     }
 
-    private static void drawSamurai(Graphics2D g, Fighter f, long t, Fighter.State state, double prog) {
     private static void drawSamurai(Graphics2D g, Fighter f, long t, Fighter.State state) {
         Color primary = f.getProfile().getPrimaryColor(); // Crimson Red
 
@@ -209,45 +200,40 @@ public class FighterRenderer {
         g.setColor(Color.WHITE);
         g.fillRect(-2, -52, 6, 3);
 
-        // Heavy Armor Chestplate (Do)
-        g.setColor(new Color(160, 25, 25));
-        g.fillRoundRect(-22, -32, 44, 58, 12, 12);
-        // Golden Armor Rivets
+        // Heavy Samurai Armor Plates (Do)
+        g.setColor(new Color(35, 18, 22));
+        g.fillRoundRect(-22, -32, 44, 62, 8, 8);
+        g.setColor(primary);
+        g.fillRect(-20, -25, 40, 6);
+        g.fillRect(-20, -12, 40, 6);
+        g.fillRect(-20, 1, 40, 6);
+
+        // Gold Crest on chest
         g.setColor(new Color(255, 215, 0));
-        g.fillRect(-18, -22, 36, 4);
-        g.fillRect(-18, -10, 36, 4);
-        g.fillRect(-18, 2, 36, 4);
+        g.fillOval(-6, -6, 12, 12);
 
-        // Shoulder Armor (Sode)
-        g.setColor(new Color(130, 15, 15));
-        g.fillRoundRect(-30, -32, 14, 28, 6, 6);
-        g.fillRoundRect(16, -32, 14, 28, 6, 6);
+        // Armored Sode (Shoulder Guards)
+        g.setColor(primary);
+        g.fillRoundRect(-32, -30, 12, 28, 4, 4);
+        g.fillRoundRect(20, -30, 12, 28, 4, 4);
 
-        // Armor Skirt (Kusazuri) & Legs
-        g.setColor(new Color(100, 20, 25));
-        g.fillRect(-20, 26, 40, 20);
-        g.setColor(new Color(30, 20, 25));
-        g.fillRect(-16, 44, 12, 32);
-        g.fillRect(4, 44, 12, 32);
+        // Hakama Armor Pants & Boots
+        g.setColor(new Color(30, 15, 20));
+        g.fillRect(-18, 30, 15, 45);
+        g.fillRect(3, 30, 15, 45);
 
         // Katana Weapon
         if (state == Fighter.State.ATTACKING) {
-            // Devastating slash arc
-            g.setColor(new Color(255, 255, 255, 220));
-            g.setStroke(new BasicStroke(5.0f));
-            g.drawArc(0, -60, 90, 90, -45, 90);
-            // Steel Blade
+            // Sweeping Dragon Slash
             g.setColor(Color.WHITE);
-            g.setStroke(new BasicStroke(3.0f));
-            g.drawLine(15, -15, 75, -45);
-        } else if (state == Fighter.State.VICTORY) {
-            // Upright katana salute
-            g.setColor(Color.WHITE);
-            g.setStroke(new BasicStroke(3.5f));
-            g.drawLine(20, 10, 20, -75);
-            // Gold hilt
-            g.setColor(new Color(255, 215, 0));
-            g.fillRect(16, 5, 8, 14);
+            g.setStroke(new BasicStroke(4.0f));
+            g.drawLine(15, -10, 85, -45);
+            g.setColor(primary);
+            g.setStroke(new BasicStroke(2.0f));
+            g.drawLine(15, -10, 85, -45);
+            // Fiery blade trail
+            g.setColor(new Color(255, 100, 0, 180));
+            g.drawArc(10, -60, 80, 80, 0, 90);
         } else {
             // Hand on scabbard ready to draw
             g.setColor(new Color(40, 20, 20));
@@ -257,7 +243,6 @@ public class FighterRenderer {
         }
     }
 
-    private static void drawMage(Graphics2D g, Fighter f, long t, Fighter.State state, double prog) {
     private static void drawMage(Graphics2D g, Fighter f, long t, Fighter.State state) {
         Color primary = f.getProfile().getPrimaryColor(); // Arcane Violet
 
@@ -273,42 +258,49 @@ public class FighterRenderer {
         g.drawLine(0, -25, 0, 75);
         g.drawRect(-8, 55, 16, 12);
 
-        // Mage Hood & Mysterious Shadowed Face
+        // Mage Hood
         g.setColor(new Color(45, 15, 75));
-        int[] hx = {-22, 22, 0};
-        int[] hy = {-38, -38, -75};
+        int[] hx = {-20, 20, 0};
+        int[] hy = {-40, -40, -85};
         g.fillPolygon(hx, hy, 3);
-        g.fillOval(-18, -55, 36, 32);
+        // Face Shadow inside hood
+        g.setColor(new Color(15, 10, 25));
+        g.fillOval(-14, -58, 28, 28);
 
-        // Glowing Arcane Eyes
+        // Glowing Magic Eyes
         g.setColor(primary);
-        g.fillOval(0, -48, 6, 6);
+        g.fillOval(-2, -50, 7, 5);
         g.setColor(Color.WHITE);
-        g.fillOval(2, -47, 3, 3);
+        g.fillOval(0, -49, 3, 3);
 
-        // Arcane Staff
-        int staffX = 28;
-        g.setColor(new Color(110, 70, 45));
-        g.setStroke(new BasicStroke(4.0f));
-        g.drawLine(staffX, 70, staffX, -50);
+        // Mystic Staff in Hand
+        g.setColor(new Color(120, 80, 40));
+        g.setStroke(new BasicStroke(3.5f));
+        g.drawLine(25, -60, 25, 70);
 
-        // Glowing Staff Crystal
-        int crystalY = (int) (-58 + Math.sin(t / 180.0) * 5);
-        g.setColor(primary);
-        g.fillOval(staffX - 9, crystalY - 9, 18, 18);
+        // Glowing Orb atop Staff
+        double orbGlow = 0.6 + Math.sin(t / 140.0) * 0.4;
+        g.setColor(new Color(primary.getRed(), primary.getGreen(), primary.getBlue(), (int) (orbGlow * 255)));
+        g.fillOval(17, -76, 16, 16);
         g.setColor(Color.WHITE);
-        g.fillOval(staffX - 4, crystalY - 4, 8, 8);
+        g.fillOval(21, -72, 8, 8);
 
-        // Magic Cast effect
         if (state == Fighter.State.ATTACKING) {
-            g.setColor(new Color(200, 120, 255, 200));
+            // Arcane beam cast
+            g.setColor(primary);
+            g.setStroke(new BasicStroke(8.0f));
+            g.drawLine(35, -20, 95, -20);
+            g.setColor(Color.WHITE);
+            g.setStroke(new BasicStroke(3.0f));
+            g.drawLine(35, -20, 95, -20);
+            // Energy burst circle
+            g.setColor(new Color(255, 255, 255, 180));
             g.fillOval(45, -35, 35, 35);
             g.setColor(Color.WHITE);
             g.fillOval(52, -28, 20, 20);
         }
     }
 
-    private static void drawRobot(Graphics2D g, Fighter f, long t, Fighter.State state, double prog) {
     private static void drawRobot(Graphics2D g, Fighter f, long t, Fighter.State state) {
         Color primary = f.getProfile().getPrimaryColor(); // High-Tech Cyan
 
@@ -364,7 +356,6 @@ public class FighterRenderer {
         }
     }
 
-    private static void drawShadowFighter(Graphics2D g, Fighter f, long t, Fighter.State state, double prog) {
     private static void drawShadowFighter(Graphics2D g, Fighter f, long t, Fighter.State state) {
         Color primary = f.getProfile().getPrimaryColor(); // Void Amber / Dark Gold
 
@@ -422,4 +413,3 @@ public class FighterRenderer {
         g.drawOval(-radius - 12, -radius - 22, (radius + 12) * 2, (radius + 12) * 2);
     }
 }
-

@@ -20,11 +20,11 @@ public class SoundEngine {
     });
 
     private boolean muted = false;
+    private volatile float volume = 0.80f; // Range 0.0 to 1.0
     private Thread musicThread = null;
     private volatile boolean musicRunning = false;
     private static final float SAMPLE_RATE = 22050f;
 
-    private SoundEngine() {}
     private SoundEngine() {
         String envMute = System.getenv("TYPING_BATTLE_MUTE");
         if (envMute != null && ("true".equalsIgnoreCase(envMute) || "1".equals(envMute))) {
@@ -54,16 +54,44 @@ public class SoundEngine {
         setMuted(!muted);
     }
 
+    public float getVolume() {
+        return volume;
+    }
+
+    public void setVolume(float vol) {
+        this.volume = Math.max(0.0f, Math.min(1.0f, vol));
+        if (this.volume <= 0.01f) {
+            this.muted = true;
+            stopBattleMusic();
+        } else {
+            this.muted = false;
+        }
+    }
+
     /**
-     * Plays a synthesized audio buffer asynchronously.
+     * Plays a synthesized audio buffer asynchronously with volume scaling.
      */
     private void playToneBuffer(byte[] audioData) {
-        if (muted) return;
+        if (muted || volume <= 0.01f) return;
+
+        final byte[] playbackData;
+        if (Math.abs(volume - 1.0f) < 0.01f) {
+            playbackData = audioData;
+        } else {
+            playbackData = new byte[audioData.length];
+            for (int i = 0; i < audioData.length; i++) {
+                int centered = (audioData[i] & 0xFF) - 128;
+                int scaled = (int) (centered * volume);
+                scaled = Math.max(-127, Math.min(127, scaled));
+                playbackData[i] = (byte) (128 + scaled);
+            }
+        }
+
         sfxPool.submit(() -> {
             try {
                 AudioFormat format = new AudioFormat(SAMPLE_RATE, 8, 1, false, false);
-                ByteArrayInputStream bais = new ByteArrayInputStream(audioData);
-                AudioInputStream ais = new AudioInputStream(bais, format, audioData.length);
+                ByteArrayInputStream bais = new ByteArrayInputStream(playbackData);
+                AudioInputStream ais = new AudioInputStream(bais, format, playbackData.length);
                 Clip clip = AudioSystem.getClip();
                 clip.open(ais);
                 clip.start();
@@ -82,7 +110,7 @@ public class SoundEngine {
      * Mechanical keyboard key click sound.
      */
     public void playKeyClick() {
-        if (muted) return;
+        if (muted || volume <= 0.01f) return;
         int samples = (int) (SAMPLE_RATE * 0.02); // 20ms
         byte[] buffer = new byte[samples];
         for (int i = 0; i < samples; i++) {
@@ -99,7 +127,7 @@ public class SoundEngine {
      * Melodic positive chime when a word is completed successfully.
      */
     public void playWordComplete() {
-        if (muted) return;
+        if (muted || volume <= 0.01f) return;
         int samples = (int) (SAMPLE_RATE * 0.16); // 160ms
         byte[] buffer = new byte[samples];
         int half = samples / 2;
@@ -116,7 +144,7 @@ public class SoundEngine {
      * Low discordant buzzer when typing error occurs.
      */
     public void playError() {
-        if (muted) return;
+        if (muted || volume <= 0.01f) return;
         int samples = (int) (SAMPLE_RATE * 0.12);
         byte[] buffer = new byte[samples];
         for (int i = 0; i < samples; i++) {
@@ -133,7 +161,7 @@ public class SoundEngine {
      * Heavy physical hit impact with bass punch and crunch noise.
      */
     public void playHit() {
-        if (muted) return;
+        if (muted || volume <= 0.01f) return;
         int samples = (int) (SAMPLE_RATE * 0.18);
         byte[] buffer = new byte[samples];
         for (int i = 0; i < samples; i++) {
@@ -151,7 +179,7 @@ public class SoundEngine {
      * Swift blade whoosh sound.
      */
     public void playSlash() {
-        if (muted) return;
+        if (muted || volume <= 0.01f) return;
         int samples = (int) (SAMPLE_RATE * 0.15);
         byte[] buffer = new byte[samples];
         for (int i = 0; i < samples; i++) {
@@ -169,7 +197,7 @@ public class SoundEngine {
      * Rising power meter or special attack ready alert.
      */
     public void playSpecialReady() {
-        if (muted) return;
+        if (muted || volume <= 0.01f) return;
         int samples = (int) (SAMPLE_RATE * 0.35);
         byte[] buffer = new byte[samples];
         for (int i = 0; i < samples; i++) {
@@ -186,7 +214,7 @@ public class SoundEngine {
      * Massive explosive blast for ultimate/special moves.
      */
     public void playSpecialBlast() {
-        if (muted) return;
+        if (muted || volume <= 0.01f) return;
         int samples = (int) (SAMPLE_RATE * 0.5);
         byte[] buffer = new byte[samples];
         for (int i = 0; i < samples; i++) {
@@ -204,12 +232,12 @@ public class SoundEngine {
      * Heroic victory fanfare arpeggio (C5 -> E5 -> G5 -> C6).
      */
     public void playVictory() {
-        if (muted) return;
+        if (muted || volume <= 0.01f) return;
         sfxPool.submit(() -> {
             try {
                 double[] notes = {523.25, 659.25, 783.99, 1046.50};
                 for (double note : notes) {
-                    if (muted) break;
+                    if (muted || volume <= 0.01f) break;
                     playSingleTone(note, 0.16, 85);
                     Thread.sleep(130);
                 }
@@ -221,12 +249,12 @@ public class SoundEngine {
      * Defeat gong / cadence.
      */
     public void playDefeat() {
-        if (muted) return;
+        if (muted || volume <= 0.01f) return;
         sfxPool.submit(() -> {
             try {
                 double[] notes = {440.00, 392.00, 349.23, 293.66};
                 for (double note : notes) {
-                    if (muted) break;
+                    if (muted || volume <= 0.01f) break;
                     playSingleTone(note, 0.22, 75);
                     Thread.sleep(180);
                 }
@@ -234,13 +262,13 @@ public class SoundEngine {
         });
     }
 
-    private void playSingleTone(double freq, double durationSec, int volume) {
+    private void playSingleTone(double freq, double durationSec, int baseVolume) {
         int samples = (int) (SAMPLE_RATE * durationSec);
         byte[] buffer = new byte[samples];
         for (int i = 0; i < samples; i++) {
             double decay = 1.0 - ((double) i / samples);
             double wave = Math.sin(2.0 * Math.PI * freq * i / SAMPLE_RATE);
-            buffer[i] = (byte) (128 + wave * decay * volume);
+            buffer[i] = (byte) (128 + wave * decay * baseVolume);
         }
         playToneBuffer(buffer);
     }
@@ -249,13 +277,13 @@ public class SoundEngine {
      * Procedural background battle synthesizer playing an energetic synth arpeggio.
      */
     public synchronized void startBattleMusic() {
-        if (musicRunning || muted) return;
+        if (musicRunning || muted || volume <= 0.01f) return;
         musicRunning = true;
         musicThread = new Thread(() -> {
             // High-octane arcade synth notes: Am pentatonic groove
             double[] bassLine = {110.0, 110.0, 130.81, 146.83, 110.0, 164.81, 146.83, 130.81};
             int step = 0;
-            while (musicRunning && !muted) {
+            while (musicRunning && !muted && volume > 0.01f) {
                 try {
                     double note = bassLine[step % bassLine.length];
                     playSingleTone(note, 0.12, 35); // Gentle volume for background
@@ -279,4 +307,3 @@ public class SoundEngine {
         }
     }
 }
-

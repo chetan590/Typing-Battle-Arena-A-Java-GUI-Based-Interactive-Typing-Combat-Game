@@ -7,6 +7,8 @@ import java.awt.*;
 
 /**
  * Difficulty and AI Personality configuration screen for Single Player battles.
+ * Features a top-right Settings modal trigger for live configuration of
+ * word speed, opponent attack rate, sound volume, and word length filtering.
  */
 @SuppressWarnings("serial")
 public class DifficultySelectPanel extends JPanel {
@@ -30,12 +32,12 @@ public class DifficultySelectPanel extends JPanel {
         setBackground(UITheme.BG_DARK);
         setLayout(new BorderLayout());
 
-        // Header
+        // Header with top-right Settings button
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setOpaque(false);
         headerPanel.setBorder(new EmptyBorder(25, 35, 15, 35));
 
-        JButton backBtn = UITheme.createStyledButton("← BACK", UITheme.TEXT_SECONDARY, 110, 38);
+        JButton backBtn = UITheme.createStyledButton("BACK", UITheme.TEXT_SECONDARY, 110, 38);
         backBtn.addActionListener(e -> screenManager.showCharacterSelect(false, null));
         headerPanel.add(backBtn, BorderLayout.WEST);
 
@@ -44,10 +46,13 @@ public class DifficultySelectPanel extends JPanel {
         titleLabel.setForeground(Color.WHITE);
         headerPanel.add(titleLabel, BorderLayout.CENTER);
 
-        JPanel spacer = new JPanel();
-        spacer.setOpaque(false);
-        spacer.setPreferredSize(new Dimension(110, 38));
-        headerPanel.add(spacer, BorderLayout.EAST);
+        // TOP-RIGHT CORNER SETTINGS BUTTON (Requirement 3)
+        JButton settingsBtn = UITheme.createStyledButton("SETTINGS", UITheme.ACCENT_AMBER, 130, 38);
+        settingsBtn.addActionListener(e -> {
+            SettingsDialog dialog = new SettingsDialog(SwingUtilities.getWindowAncestor(this));
+            dialog.setVisible(true);
+        });
+        headerPanel.add(settingsBtn, BorderLayout.EAST);
 
         add(headerPanel, BorderLayout.NORTH);
 
@@ -98,7 +103,6 @@ public class DifficultySelectPanel extends JPanel {
         persLabel.setFont(UITheme.FONT_SUBHEADER);
         persLabel.setForeground(Color.WHITE);
         personalityCombo = new JComboBox<>(AIPersonality.values());
-        JComboBox<AIPersonality> personalityCombo = new JComboBox<>(AIPersonality.values());
         personalityCombo.setFont(UITheme.FONT_BODY);
         personalityCombo.setSelectedItem(AIPersonality.BALANCED);
         personalityCombo.addActionListener(e -> selectedPersonality = (AIPersonality) personalityCombo.getSelectedItem());
@@ -109,7 +113,6 @@ public class DifficultySelectPanel extends JPanel {
         themeLabel.setForeground(Color.WHITE);
         String[] themes = {"CYBERPUNK", "DOJO", "MYSTIC_TEMPLE", "VOLCANIC_CORE", "KEYBOARD_SANCTUM"};
         themeCombo = new JComboBox<>(themes);
-        JComboBox<String> themeCombo = new JComboBox<>(themes);
         themeCombo.setFont(UITheme.FONT_BODY);
         themeCombo.addActionListener(e -> selectedTheme = (String) themeCombo.getSelectedItem());
 
@@ -124,7 +127,7 @@ public class DifficultySelectPanel extends JPanel {
         contentPanel.add(Box.createVerticalStrut(25));
 
         // Start Battle Button
-        JButton startBtn = UITheme.createStyledButton("ENTER THE ARENA ⚔", UITheme.ACCENT_CYAN, 340, 52);
+        JButton startBtn = UITheme.createStyledButton("ENTER THE ARENA", UITheme.ACCENT_CYAN, 340, 52);
         startBtn.setFont(UITheme.FONT_HEADER);
         startBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
         startBtn.addActionListener(e -> {
@@ -186,4 +189,3 @@ public class DifficultySelectPanel extends JPanel {
         opponentTypeCombo.setSelectedItem(selectedOpponentType);
     }
 }
-

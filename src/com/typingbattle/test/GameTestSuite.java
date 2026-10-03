@@ -3,6 +3,7 @@ package com.typingbattle.test;
 import com.typingbattle.data.DataManager;
 import com.typingbattle.data.MatchRecord;
 import com.typingbattle.engine.CombatEngine;
+import com.typingbattle.engine.MultiplayerSession;
 import com.typingbattle.engine.ParticleSystem;
 import com.typingbattle.engine.SoundEngine;
 import com.typingbattle.engine.WordBank;
@@ -10,7 +11,7 @@ import com.typingbattle.model.*;
 
 /**
  * Automated headless test suite verifying engine mechanics,
- * word dictionaries, WPM math, ranking algorithms, and data persistence.
+ * word dictionaries, WPM math, ranking algorithms, settings, session, and networking.
  */
 public class GameTestSuite {
 
@@ -64,6 +65,42 @@ public class GameTestSuite {
             failed++;
         }
 
+        try {
+            testGameSettingsAndWordFiltering();
+            System.out.println("  [PASS] GameSettings & WordBank length filtering (3, 4, 5, 6, Mixed)");
+            passed++;
+        } catch (Throwable t) {
+            System.err.println("  [FAIL] GameSettings & WordBank filter: " + t.getMessage());
+            failed++;
+        }
+
+        try {
+            testSessionManagerAndLeaderboardSorting();
+            System.out.println("  [PASS] SessionManager pilot info & dynamic score-sorted leaderboard");
+            passed++;
+        } catch (Throwable t) {
+            System.err.println("  [FAIL] SessionManager & Leaderboard: " + t.getMessage());
+            failed++;
+        }
+
+        try {
+            testStoryActsProgression();
+            System.out.println("  [PASS] Expanded Campaign Story (Acts I through VIII progression)");
+            passed++;
+        } catch (Throwable t) {
+            System.err.println("  [FAIL] Story Acts Progression: " + t.getMessage());
+            failed++;
+        }
+
+        try {
+            testMultiplayerSessionState();
+            System.out.println("  [PASS] Cross-device MultiplayerSession room creation & synchronization");
+            passed++;
+        } catch (Throwable t) {
+            System.err.println("  [FAIL] MultiplayerSession state: " + t.getMessage());
+            failed++;
+        }
+
         System.out.println("\n>>> TEST SUITE SUMMARY: " + passed + " PASSED, " + failed + " FAILED <<<");
         if (failed > 0) {
             System.exit(1);
@@ -82,7 +119,6 @@ public class GameTestSuite {
 
     private static void testMatchStatsAndRanks() {
         MatchStats stats = new MatchStats();
-        // Record 100 correct keystrokes, 5 error keystrokes
         for (int i = 0; i < 100; i++) stats.recordKeystroke(true);
         for (int i = 0; i < 5; i++) stats.recordKeystroke(false);
 
@@ -104,7 +140,7 @@ public class GameTestSuite {
         CharacterProfile p2 = CharacterProfile.getProfile(CharacterType.SAMURAI);
         ParticleSystem ps = new ParticleSystem();
         SoundEngine se = SoundEngine.getInstance();
-        se.setMuted(true); // Headless test - mute sound
+        se.setMuted(true);
 
         CombatEngine engine = new CombatEngine(
                 CombatEngine.BattleMode.SINGLE_PLAYER,
@@ -116,16 +152,12 @@ public class GameTestSuite {
         int initialHp = engine.getOpponent().getCurrentHp();
         String currentWord = engine.getP1CurrentWord();
 
-        // Type matching characters
         engine.handlePlayer1Input(currentWord);
 
-        // Word completed! Opponent must have taken damage, combo should be 1
         assert engine.getOpponent().getCurrentHp() < initialHp : "Opponent HP did not decrease after word completion";
         assert engine.getPlayer1().getComboCount() == 1 : "Combo count was not incremented";
         assert engine.getPlayer1().getPowerMeter() > 0 : "Power meter did not increase";
 
-        // Test error handling
-        String nextWord = engine.getP1CurrentWord();
         engine.handlePlayer1Input("ZZZ_INVALID");
         assert engine.isP1HasError() : "Engine should flag error on mistyped prefix";
         assert engine.getPlayer1().getComboCount() == 0 : "Combo must reset on mistake";
@@ -165,5 +197,94 @@ public class GameTestSuite {
         se.playSlash();
         se.playSpecialBlast();
     }
-}
 
+    private static void testGameSettingsAndWordFiltering() {
+        GameSettings settings = GameSettings.getInstance();
+        settings.setAppearanceSpeed(GameSettings.WordAppearanceSpeed.FAST);
+        assert settings.getAppearanceSpeed() == GameSettings.WordAppearanceSpeed.FAST : "Word appearance speed failed";
+
+        settings.setAttackSpeed(GameSettings.OpponentAttackSpeed.SLOW);
+        assert settings.getAttackSpeed() == GameSettings.OpponentAttackSpeed.SLOW : "Opponent attack speed failed";
+
+        settings.setVolumePercent(75);
+        assert settings.getVolumePercent() == 75 : "Volume setting failed";
+
+        // Test Word Length Filter strictly
+        settings.setWordLengthFilter(GameSettings.WordLengthFilter.LENGTH_3);
+        for (int i = 0; i < 20; i++) {
+            String word = WordBank.getRandomWord(Difficulty.MEDIUM);
+            assert word.length() == 3 : "Expected 3-letter word, got: " + word;
+        }
+
+        settings.setWordLengthFilter(GameSettings.WordLengthFilter.LENGTH_4);
+        for (int i = 0; i < 20; i++) {
+            String word = WordBank.getRandomWord(Difficulty.MEDIUM);
+            assert word.length() == 4 : "Expected 4-letter word, got: " + word;
+        }
+
+        settings.setWordLengthFilter(GameSettings.WordLengthFilter.LENGTH_5);
+        for (int i = 0; i < 20; i++) {
+            String word = WordBank.getRandomWord(Difficulty.MEDIUM);
+            assert word.length() == 5 : "Expected 5-letter word, got: " + word;
+        }
+
+        settings.setWordLengthFilter(GameSettings.WordLengthFilter.LENGTH_6);
+        for (int i = 0; i < 20; i++) {
+            String word = WordBank.getRandomWord(Difficulty.MEDIUM);
+            assert word.length() == 6 : "Expected 6-letter word, got: " + word;
+        }
+
+        settings.setWordLengthFilter(GameSettings.WordLengthFilter.MIXED);
+    }
+
+    private static void testSessionManagerAndLeaderboardSorting() {
+        SessionManager session = SessionManager.getInstance();
+        session.setPlayerName("Chetan");
+        session.setPreferredCombatant(CharacterType.SAMURAI);
+        session.setLoggedIn(true);
+
+        assert "Chetan".equals(session.getPlayerName()) : "Player name mismatch";
+        assert session.getPreferredCombatant() == CharacterType.SAMURAI : "Combatant mismatch";
+        assert session.getPlayerDisplayInfo().contains("Chetan") : "Player info must include name";
+
+        DataManager dm = DataManager.getInstance();
+        dm.recordMatch(new MatchRecord(System.currentTimeMillis(), "Chetan", "Samurai", "Robot",
+                "Hard", 70, 98.0, "S RANK", true, 10, 8500, 40, 42, 2, "Hard", 420));
+        dm.recordMatch(new MatchRecord(System.currentTimeMillis(), "Rival", "Ninja", "Mage",
+                "Hard", 60, 95.0, "A RANK", true, 8, 9200, 35, 36, 1, "Hard", 450));
+
+        java.util.List<MatchRecord> sorted = dm.getLeaderboardSortedByScore();
+        assert sorted.size() >= 2 : "Sorted leaderboard should have at least 2 records";
+        for (int i = 0; i < sorted.size() - 1; i++) {
+            assert sorted.get(i).getScore() >= sorted.get(i + 1).getScore() :
+                    "Leaderboard not dynamically sorted descending: " + sorted.get(i).getScore() + " < " + sorted.get(i + 1).getScore();
+        }
+    }
+
+    private static void testStoryActsProgression() {
+        StoryStage[] stages = StoryStage.getAllStages();
+        assert stages.length == 8 : "Campaign must contain 8 continuous acts, found: " + stages.length;
+        for (int i = 0; i < stages.length; i++) {
+            StoryStage st = stages[i];
+            assert st.getStageNumber() == i + 1 : "Stage index mismatch for: " + st.getStageTitle();
+            assert st.getStageTitle() != null && !st.getStageTitle().isEmpty() : "Stage title empty";
+            assert st.getIntroDialogue() != null && !st.getIntroDialogue().isEmpty() : "Dialogue missing for: " + st.getStageTitle();
+        }
+    }
+
+    private static void testMultiplayerSessionState() {
+        MultiplayerSession session = new MultiplayerSession("A7K92", "127.0.0.1", 8080, "Chetan", CharacterType.NINJA);
+        assert "A7K92".equals(session.getRoomCode()) : "Room code mismatch";
+        assert !session.isP2Connected() : "P2 should not be connected yet";
+
+        boolean joined = session.joinPlayer2("GuestPilot", CharacterType.SAMURAI);
+        assert joined && session.isP2Connected() : "P2 should be connected";
+
+        session.startBattle();
+        assert session.getState() == MultiplayerSession.State.BATTLE : "Session should be in BATTLE state";
+        assert session.getP1CurrentWord() != null && !session.getP1CurrentWord().isEmpty() : "P1 word must be non-empty";
+
+        session.executeP1Attack(25, "combat");
+        assert session.getP2Hp() < 1000.0 : "P2 HP should decrease after P1 attack";
+    }
+}

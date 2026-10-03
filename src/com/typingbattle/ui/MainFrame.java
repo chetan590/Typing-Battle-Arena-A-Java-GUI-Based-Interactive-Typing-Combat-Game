@@ -16,7 +16,7 @@ public class MainFrame extends JFrame {
     private final ScreenManager screenManager;
 
     public MainFrame() {
-        super("Typing Battle Arena — Interactive Combat Game");
+        super("Typing Battle Arena - Interactive Combat Game");
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1120, 740);
@@ -38,8 +38,8 @@ public class MainFrame extends JFrame {
             }
         });
 
-        // Launch splash screen
-        screenManager.showSplashScreen();
+        // Launch dummy login gateway as first screen
+        screenManager.showLogin();
     }
 
     private Image createAppIcon() {
@@ -60,7 +60,7 @@ public class MainFrame extends JFrame {
         g2.setFont(new Font("SansSerif", Font.BOLD, 32));
         g2.setColor(new Color(245, 158, 11));
         FontMetrics fm = g2.getFontMetrics();
-        g2.drawString("⚔", (64 - fm.stringWidth("⚔")) / 2, 44);
+        g2.setStroke(new BasicStroke(3.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND)); g2.drawLine(20, 20, 44, 44); g2.drawLine(44, 20, 20, 44);
 
         g2.dispose();
         return icon;

@@ -96,7 +96,7 @@ public class SplashScreenPanel extends JPanel {
         g2.setFont(new Font("Monospaced", Font.BOLD, 36));
         g2.setColor(Color.WHITE);
         FontMetrics fmKey = g2.getFontMetrics();
-        g2.drawString("⚔", coreX - fmKey.stringWidth("⚔") / 2, coreY + 12);
+        g2.setStroke(new BasicStroke(3.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND)); g2.drawLine(coreX - 14, coreY - 14, coreX + 14, coreY + 14); g2.drawLine(coreX + 14, coreY - 14, coreX - 14, coreY + 14);
 
         // Orbiting Keystroke Glyphs
         String[] orbitKeys = {"[W]", "[A]", "[S]", "[D]"};
@@ -130,7 +130,7 @@ public class SplashScreenPanel extends JPanel {
         g2.setFont(UITheme.FONT_SUBHEADER);
         g2.setColor(UITheme.ACCENT_AMBER);
         FontMetrics fmSub = g2.getFontMetrics();
-        String sub = "The Keyboard Core Chronicles • A Real-Time Typing Combat Game";
+        String sub = "The Keyboard Core Chronicles - A Real-Time Typing Combat Game";
         g2.drawString(sub, (w - fmSub.stringWidth(sub)) / 2, ty + 35);
 
         // Pulsating "Click or Press Any Key to Start" prompt
@@ -139,14 +139,14 @@ public class SplashScreenPanel extends JPanel {
         g2.setFont(UITheme.FONT_BODY_BOLD);
         g2.setColor(UITheme.TEXT_PRIMARY);
         FontMetrics fmPrompt = g2.getFontMetrics();
-        String prompt = "▶  PRESS ANY KEY OR CLICK TO ENTER  ◀";
+        String prompt = "PRESS ANY KEY OR CLICK TO ENTER";
         g2.drawString(prompt, (w - fmPrompt.stringWidth(prompt)) / 2, (int) (h * 0.82));
 
         // Footer version info
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f));
         g2.setFont(UITheme.FONT_SMALL);
         g2.setColor(UITheme.TEXT_MUTED);
-        String footer = "Java GUI Combat Engine • Pure Java SE • Version 1.0";
+        String footer = "Java GUI Combat Engine - Pure Java SE - Version 1.0";
         g2.drawString(footer, (w - g2.getFontMetrics().stringWidth(footer)) / 2, h - 25);
 
         g2.dispose();

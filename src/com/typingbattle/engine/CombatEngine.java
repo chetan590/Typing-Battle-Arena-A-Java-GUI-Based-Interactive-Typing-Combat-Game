@@ -298,7 +298,7 @@ public class CombatEngine {
         soundEngine.playSpecialBlast();
         particleSystem.spawnSpecialBlast(opponent.getX(), opponent.getY(), player1.getProfile().getPrimaryColor());
         particleSystem.spawnFloatingText(opponent.getX(), opponent.getY() - 45,
-                "★ " + player1.getProfile().getSpecialAttackName().toUpperCase() + " ★ -" + specialDmg,
+                player1.getProfile().getSpecialAttackName().toUpperCase() + " - " + specialDmg,
                 Color.ORANGE, new Font("SansSerif", Font.BOLD, 19));
 
         return true;
@@ -381,7 +381,7 @@ public class CombatEngine {
         soundEngine.playSpecialBlast();
         particleSystem.spawnSpecialBlast(player1.getX(), player1.getY(), opponent.getProfile().getPrimaryColor());
         particleSystem.spawnFloatingText(player1.getX(), player1.getY() - 45,
-                "★ " + opponent.getProfile().getSpecialAttackName().toUpperCase() + " ★ -" + specialDmg,
+                opponent.getProfile().getSpecialAttackName().toUpperCase() + " - " + specialDmg,
                 Color.ORANGE, new Font("SansSerif", Font.BOLD, 19));
 
         return true;
